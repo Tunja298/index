@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilana - Aplikacija za Piljenje Daske</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c2c2c, #3d3d3d);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Logo Screen */
+        .logo-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e1e, #2c2c2c);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo-screen:hover {
+            transform: scale(1.02);
+        }
+
+        .logo {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 1rem;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            color: #c0c0c0;
+            text-align: center;
+        }
+
+        /* Main Menu */
+        .main-menu {
+            display: none;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .menu-button {
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            border: 3px solid #2c2c2c;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .menu-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+        }
+
+        .menu-button h3 {
+            font-size: 1.4rem;
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 80vh;
+        }
+
+        .screen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #2c2c2c;
+        }
+
+        .back-button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c2c2c;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #2c2c2c;
+        }
+
+        .primary-button {
+            background: #2c2c2c;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .primary-button:hover {
+            background: #3d3d3d;
+            transform: translateY(-2px);
+        }
+
+        .secondary-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .secondary-button:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        /* Package Entry */
+        .dimensions-container {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .dimensions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .package-info {
+            background: #e8e8e8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #2c2c2c;
+        }
+
+        /* Updated Width Input Styles */
+        .width-input-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 3px solid #2c2c2c;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .width-input-section h3 {
+            text-align: center;
+            color: #2c2c2c;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 1.5rem;
+            align-items: end;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c2c2c;
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+
+        .large-input {
+            font-size: 2rem;
+            padding: 1.2rem;
+            text-align: center;
+            border: 3px solid #2c2c2c;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .large-input:focus {
+            outline: none;
+            border-color: #3d3d3d;
+            background: white;
+            box-shadow: 0 0 10px rgba(44, 44, 44, 0.2);
+        }
+
+        .lengths-display {
+            background: #e8e8e8;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #2c2c2c;
+        }
+
+        .lengths-display h4 {
+            color: #2c2c2c;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .lengths-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+
+        .length-item {
+            background: #2c2c2c;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .length-item:hover {
+            background: #3d3d3d;
+            transform: scale(1.05);
+        }
+
+        .length-item.selected {
+            border-color: #ffc107;
+            background: #3d3d3d;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+
+        .large-add-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 1.5rem 2.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            align-self: end;
+        }
+
+        .large-add-button:hover {
+            background: linear-gradient(135deg, #218838, #1ea085);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .large-add-button:active {
+            transform: translateY(-1px);
+        }
+
+        .dimensions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .dimensions-table th,
+        .dimensions-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: center;
+        }
+
+        .dimensions-table th {
+            background: #2c2c2c;
+            color: white;
+        }
+
+        .volume-summary {
+            background: #d4edda;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            border: 2px solid #28a745;
+        }
+
+        .volume-summary h3 {
+            color: #155724;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Package List */
+        .package-list {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .package-item {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .package-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .package-details h4 {
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+        }
+
+        .package-details p {
+            margin: 0.2rem 0;
+            color: #666;
+        }
+
+        .package-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .package-actions button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .edit-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .shipped-btn {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .shipped {
+            opacity: 0.6;
+            background: #f8f9fa !important;
+        }
+
+        /* Inventory Table */
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .inventory-table th {
+            background: #2c2c2c;
+            color: white;
+            font-weight: bold;
+        }
+
+        .inventory-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            color: #2c2c2c;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        /* Landscape Tablet Optimizations */
+        @media (min-width: 768px) and (orientation: landscape) {
+            .menu-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .menu-button {
+                padding: 1.5rem;
+            }
+            
+            .menu-button h3 {
+                font-size: 1.2rem;
+            }
+            
+            .screen {
+                max-width: 95vw;
+                margin: 1rem auto;
+                padding: 1.5rem;
+            }
+            
+            .screen-header {
+                margin-bottom: 1.5rem;
+            }
+            
+            .screen-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            /* Two-column layout for forms */
+            .form-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+            
+            .form-left {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .form-right {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            /* Package entry optimizations */
+            .package-entry-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+            
+            .input-container {
+                grid-template-columns: 1fr auto;
+                gap: 1rem;
+                align-items: end;
+            }
+            
+            .lengths-display {
+                grid-column: 1 / -1;
+            }
+            
+            .large-add-button {
+                padding: 1rem 2rem;
+                font-size: 1.2rem;
+                min-height: 80px;
+            }
+            
+            /* Table optimizations */
+            .dimensions-table {
+                font-size: 0.9rem;
+            }
+            
+            .dimensions-table th,
+            .dimensions-table td {
+                padding: 0.6rem;
+            }
+            
+            /* Package list optimizations */
+            .package-list {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 1rem;
+            }
+            
+            .package-item {
+                padding: 1rem;
+            }
+            
+            .package-details h4 {
+                font-size: 1.1rem;
+            }
+            
+            .package-details p {
+                font-size: 0.9rem;
+            }
+            
+            .package-actions {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+            
+            .package-actions button {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+                min-width: 80px;
+            }
+            
+            /* Inventory table optimizations */
+            .inventory-table {
+                font-size: 0.9rem;
+            }
+            
+            .inventory-table th,
+            .inventory-table td {
+                padding: 0.7rem 0.5rem;
+            }
+            
+            /* Volume summary optimizations */
+            .volume-summary {
+                margin-top: 1rem;
+                padding: 1rem;
+            }
+            
+            .summary-grid {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+                gap: 0.8rem !important;
+            }
+            
+            .summary-item {
+                padding: 0.8rem !important;
+                font-size: 0.9rem;
+            }
+            
+            .summary-total {
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 0.8rem !important;
+                font-size: 1.1rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dimensions-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .input-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .large-add-button {
+                justify-self: center;
+            }
+            
+            .package-entry-layout {
+                display: block;
+            }
+            
+            .form-container {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo Screen -->
+    <div id="logoScreen" class="logo-screen" onclick="showMainMenu()">
+        <div class="logo">🌲 PILANA FRIVANTO</div>
+        <div class="company-name">Aplikacija za Piljenje Daske</div>
+        <p style="color: #c0c0c0; margin-top: 1rem;">Kliknite za nastavak</p>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="mainMenu" class="main-menu">
+        <div class="header">
+            <h1>🌲 PILANA FRIVANTO - Glavni Izbornik</h1>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-button" onclick="showNewPackage()">
+                <h3>📦 NOVI PAKET</h3>
+                <p>Stvori novi paket za piljenje</p>
+            </div>
+            <div class="menu-button" onclick="showInventory()">
+                <h3>📊 STANJE SKLADIŠTA</h3>
+                <p>Pregled trenutnog stanja robe</p>
+            </div>
+            <div class="menu-button" onclick="showFinishedPackages()">
+                <h3>✅ ZAVRŠENI PAKETI</h3>
+                <p>Arhiva završenih paketa</p>
+            </div>
+            <div class="menu-button" onclick="showUnfinishedPackages()">
+                <h3>⏳ NEZAVRŠENI PAKETI</h3>
+                <p>Paketi u tijeku</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Package Screen -->
+    <div id="newPackageScreen" class="screen">
+        <div class="screen-header">
+            <h2>📦 Novi Paket</h2>
+            <button class="back-button" onclick="showMainMenu()">← Nazad</button>
+        </div>
+        
+        <form id="packageForm">
+            <div class="form-container">
+                <div class="form-left">
+                    <div class="form-group">
+                        <label>Vrsta Drveta:</label>
+                        <select id="woodType" required>
+                            <option value="">Odaberite vrstu drveta</option>
+                            <option value="1">HRAST</option>
+                            <option value="2">BUKVA</option>
+                            <option value="3">BAGREM</option>
+                            <option value="4">JELA</option>
+                            <option value="5">TRESNJA</option>
+                            <option value="6">TOPOLA</option>
+                            <option value="7">JOHA</option>
+                            <option value="8">ORAH</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Debljina Rezanja (mm):</label>
+                        <input type="number" id="thickness" placeholder="npr. 31" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Klasa Kvalitete:</label>
+                        <select id="quality" required>
+                            <option value="">Odaberite kvalitetu</option>
+                            <option value="01">A</option>
+                            <option value="02">AB</option>
+                            <option value="03">C</option>
+                            <option value="04">PILOPAK</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-right">
+                    <div class="form-group">
+                        <label>Tip Daske:</label>
+                        <select id="boardType" required>
+                            <option value="">Odaberite tip</option>
+                            <option value="OKRAJCENA">OKRAJCENA</option>
+                            <option value="NEOKRAJCENA">NEOKRAJCENA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dužine u Paketu (cm):</label>
+                        <div id="lengthsContainer">
+                            <input type="number" class="length-input" placeholder="npr. 210" required>
+                            <input type="number" class="length-input" placeholder="npr. 220">
+                            <input type="number" class="length-input" placeholder="npr. 230">
+                            <input type="number" class="length-input" placeholder="npr. 240">
+                        </div>
+                        <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">Unesite najmanje 1 dužinu</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="grid-column: 1 / -1; text-align: center; margin-top: 1rem;">
+                <button type="button" class="primary-button" onclick="createPackage()">Stvori Paket</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Package Entry Screen -->
+    <div id="packageEntryScreen" class="screen">
+        <div class="screen-header">
+            <h2 id="packageTitle">Unos Dimenzija</h2>
+            <button class="back-button" onclick="showMainMenu()">← Nazad</button>
+        </div>
+
+        <div id="packageInfo" class="package-info"></div>
+
+        <div class="dimensions-container">
+            <div class="dimensions-header">
+                <h3>Unos Širine Daske</h3>
+                <div>
+                    <button class="secondary-button" onclick="finishPackage()">ZAVRŠI PAKET</button>
+                </div>
+            </div>
+
+            <div class="package-entry-layout">
+                <div class="width-input-section">
+                    <h3>📏 Unos Dimenzija Daske</h3>
+                    
+                    <div class="input-container">
+                        <div class="input-group">
+                            <label>ŠIRINA (cm)</label>
+                            <input type="number" id="widthInput" class="large-input" placeholder="0.0" step="0.1">
+                        </div>
+                        
+                        <button class="large-add-button" onclick="addWidth()">
+                            ➕ DODAJ<br>DASKU
+                        </button>
+                        
+                        <div class="input-group lengths-display">
+                            <label>DOSTUPNE DUŽINE</label>
+                            <div>
+                                <h4>Kliknite za odabir:</h4>
+                                <div id="lengthsList" class="lengths-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="volumeSummary" class="volume-summary">
+                    <h3>Sažetak Paketa</h3>
+                    <div id="summaryContent"></div>
+                </div>
+            </div>
+
+            <table class="dimensions-table" id="dimensionsTable">
+                <thead>
+                    <tr>
+                        <th>Redni br.</th>
+                        <th>Dužina (cm)</th>
+                        <th>Širina (cm)</th>
+                        <th>Volumen (m³)</th>
+                        <th>Akcije</th>
+                    </tr>
+                </thead>
+                <tbody id="dimensionsBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Finished Packages Screen -->
+    <div id="finishedPackagesScreen" class="screen">
+        <div class="screen-header">
+            <h2>✅ Završeni Paketi</h2>
+            <button class="back-button" onclick="showMainMenu()">← Nazad</button>
+        </div>
+        <div id="finishedPackagesList" class="package-list"></div>
+    </div>
+
+    <!-- Unfinished Packages Screen -->
+    <div id="unfinishedPackagesScreen" class="screen">
+        <div class="screen-header">
+            <h2>⏳ Nezavršeni Paketi</h2>
+            <button class="back-button" onclick="showMainMenu()">← Nazad</button>
+        </div>
+        <div id="unfinishedPackagesList" class="package-list"></div>
+    </div>
+
+    <!-- Inventory Screen -->
+    <div id="inventoryScreen" class="screen">
+        <div class="screen-header">
+            <h2>📊 Stanje Skladišta</h2>
+            <button class="back-button" onclick="showMainMenu()">← Nazad</button>
+        </div>
+        <table class="inventory-table" id="inventoryTable">
+            <thead>
+                <tr>
+                    <th>Vrsta Drveta</th>
+                    <th>A Klasa (m³)</th>
+                    <th>AB Klasa (m³)</th>
+                    <th>C Klasa (m³)</th>
+                    <th>PILOPAK (m³)</th>
+                    <th>Ukupno (m³)</th>
+                </tr>
+            </thead>
+            <tbody id="inventoryBody">
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3>🔒 Unesite Lozinku</h3>
+            <input type="password" id="passwordInput" placeholder="Lozinka">
+            <div style="margin-top: 1rem;">
+                <button class="primary-button" onclick="checkPassword()">Potvrdi</button>
+                <button class="secondary-button" onclick="closePasswordModal()">Otkaži</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentPackage = null;
+        let pendingAction = null;
+        let actionPackage = null;
+        let selectedLength = null;
+
+        // Wood types mapping
+        const woodTypes = {
+            '1': 'HRAST', '2': 'BUKVA', '3': 'BAGREM', '4': 'JELA',
+            '5': 'TRESNJA', '6': 'TOPOLA', '7': 'JOHA', '8': 'ORAH'
+        };
+
+        const qualityTypes = {
+            '01': 'A', '02': 'AB', '03': 'C', '04': 'PILOPAK'
+        };
+
+        // Initialize app
+        function initApp() {
+            if (!getFromStorage('packages')) {
+                saveToStorage('packages', []);
+            }
+            if (!getFromStorage('packageCounter')) {
+                saveToStorage('packageCounter', {});
+            }
+        }
+
+        // Storage functions
+        function saveToStorage(key, data) {
+            const storage = JSON.parse(localStorage.getItem('pilanaData') || '{}');
+            storage[key] = data;
+            localStorage.setItem('pilanaData', JSON.stringify(storage));
+        }
+
+        function getFromStorage(key) {
+            const storage = JSON.parse(localStorage.getItem('pilanaData') || '{}');
+            return storage[key];
+        }
+
+        // Navigation functions
+        function showMainMenu() {
+            hideAllScreens();
+            document.getElementById('mainMenu').style.display = 'block';
+        }
+
+        function showNewPackage() {
+            hideAllScreens();
+            document.getElementById('newPackageScreen').style.display = 'block';
+        }
+
+        function showInventory() {
+            hideAllScreens();
+            updateInventoryDisplay();
+            document.getElementById('inventoryScreen').style.display = 'block';
+        }
+
+        function showFinishedPackages() {
+            hideAllScreens();
+            updateFinishedPackagesList();
+            document.getElementById('finishedPackagesScreen').style.display = 'block';
+        }
+
+        function showUnfinishedPackages() {
+            hideAllScreens();
+            updateUnfinishedPackagesList();
+            document.getElementById('unfinishedPackagesScreen').style.display = 'block';
+        }
+
+        function hideAllScreens() {
+            document.getElementById('logoScreen').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('newPackageScreen').style.display = 'none';
+            document.getElementById('packageEntryScreen').style.display = 'none';
+            document.getElementById('finishedPackagesScreen').style.display = 'none';
+            document.getElementById('unfinishedPackagesScreen').style.display = 'none';
+            document.getElementById('inventoryScreen').style.display = 'none';
+        }
+
+        // Package creation
+        function createPackage() {
+            const woodType = document.getElementById('woodType').value;
+            const thickness = document.getElementById('thickness').value;
+            const quality = document.getElementById('quality').value;
+            const boardType = document.getElementById('boardType').value;
+
+            if (!woodType || !thickness || !quality || !boardType) {
+                alert('Molimo unesite sve potrebne podatke!');
+                return;
+            }
+
+            // Get lengths
+            const lengthInputs = document.querySelectorAll('.length-input');
+            const lengths = [];
+            lengthInputs.forEach(input => {
+                if (input.value) {
+                    lengths.push(parseInt(input.value));
+                }
+            });
+
+            if (lengths.length < 1) {
+                alert('Molimo unesite najmanje 1 dužinu!');
+                return;
+            }
+
+            // Generate package number
+            const packageNumber = generatePackageNumber(woodType, quality);
+
+            // Create package object
+            currentPackage = {
+                id: packageNumber,
+                woodType: woodType,
+                woodTypeName: woodTypes[woodType],
+                thickness: parseInt(thickness),
+                lengths: lengths,
+                quality: quality,
+                qualityName: qualityTypes[quality],
+                boardType: boardType,
+                dimensions: [],
+                totalVolume: 0,
+                totalBoards: 0,
+                isFinished: false,
+                isShipped: false,
+                createdAt: new Date().toISOString()
+            };
+
+            // Save package
+            const packages = getFromStorage('packages') || [];
+            packages.push(currentPackage);
+            saveToStorage('packages', packages);
+
+            // Show package entry screen
+            showPackageEntry();
+        }
+
+        function generatePackageNumber(woodType, quality) {
+            let counters = getFromStorage('packageCounter') || {};
+            const key = `${woodType}${quality}`;
+            
+            if (!counters[key]) {
+                counters[key] = 0;
+            }
+            
+            counters[key]++;
+            saveToStorage('packageCounter', counters);
+            
+            return `${woodType}${quality}${counters[key].toString().padStart(3, '0')}`;
+        }
+
+        function showPackageEntry() {
+            hideAllScreens();
+            document.getElementById('packageEntryScreen').style.display = 'block';
+            
+            // Update package info
+            document.getElementById('packageTitle').textContent = `Paket: P-${currentPackage.id}`;
+            
+            const packageInfo = document.getElementById('packageInfo');
+            packageInfo.innerHTML = `
+                <h3>📋 Informacije o Paketu P-${currentPackage.id}</h3>
+                <p><strong>Vrsta drveta:</strong> ${currentPackage.woodTypeName}</p>
+                <p><strong>Debljina:</strong> ${currentPackage.thickness}mm</p>
+                <p><strong>Dužine:</strong> ${currentPackage.lengths.join('cm, ')}cm</p>
+                <p><strong>Kvaliteta:</strong> ${currentPackage.qualityName}</p>
+                <p><strong>Tip:</strong> ${currentPackage.boardType}</p>
+            `;
+
+            // Update lengths display
+            updateLengthsDisplay();
+
+            updateDimensionsTable();
+            updateVolumeSummary();
+        }
+
+        function updateLengthsDisplay() {
+            const lengthsList = document.getElementById('lengthsList');
+            lengthsList.innerHTML = '';
+            
+            currentPackage.lengths.forEach(length => {
+                const lengthItem = document.createElement('div');
+                lengthItem.className = 'length-item';
+                lengthItem.textContent = `${length}cm`;
+                lengthItem.onclick = () => selectLength(length);
+                lengthsList.appendChild(lengthItem);
+            });
+        }
+
+        function selectLength(length) {
+            selectedLength = length;
+            
+            // Update visual selection
+            const lengthItems = document.querySelectorAll('.length-item');
+            lengthItems.forEach(item => {
+                item.classList.remove('selected');
+                if (item.textContent === `${length}cm`) {
+                    item.classList.add('selected');
+                }
+            });
+        }
+
+        function addWidth() {
+            const widthInput = document.getElementById('widthInput');
+            
+            const width = parseFloat(widthInput.value);
+            
+            if (!width || !selectedLength) {
+                alert('Molimo unesite širinu i odaberite dužinu!');
+                return;
+            }
+
+            // Calculate volume: length(cm) * width(cm) * thickness(mm) / 1,000,000 = m³
+            // Convert: length(cm)/100 * width(cm)/100 * thickness(mm)/1000 = m³
+            const volume = (selectedLength * width * currentPackage.thickness) / 10000000;
+
+            // Add dimension to current package
+            const dimension = {
+                length: selectedLength,
+                width: width,
+                volume: volume,
+                timestamp: new Date().toISOString()
+            };
+
+            currentPackage.dimensions.push(dimension);
+            
+            // Update package in storage
+            const packages = getFromStorage('packages') || [];
+            const packageIndex = packages.findIndex(p => p.id === currentPackage.id);
+            if (packageIndex !== -1) {
+                packages[packageIndex] = currentPackage;
+                saveToStorage('packages', packages);
+            }
+
+            // Clear inputs
+            widthInput.value = '';
+            selectedLength = null;
+            
+            // Clear visual selection
+            const lengthItems = document.querySelectorAll('.length-item');
+            lengthItems.forEach(item => item.classList.remove('selected'));
+
+            // Update displays
+            updateDimensionsTable();
+            updateVolumeSummary();
+            
+            // Focus back to width input for quick entry
+            widthInput.focus();
+        }
+
+        function updateDimensionsTable() {
+            const tbody = document.getElementById('dimensionsBody');
+            tbody.innerHTML = '';
+
+            currentPackage.dimensions.forEach((dim, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${dim.length}</td>
+                    <td>${dim.width}</td>
+                    <td>${dim.volume.toFixed(3)}</td>
+                    <td>
+                        <button class="delete-btn" onclick="removeDimension(${index})">Ukloni</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function removeDimension(index) {
+            currentPackage.dimensions.splice(index, 1);
+            
+            // Update package in storage
+            const packages = getFromStorage('packages') || [];
+            const packageIndex = packages.findIndex(p => p.id === currentPackage.id);
+            if (packageIndex !== -1) {
+                packages[packageIndex] = currentPackage;
+                saveToStorage('packages', packages);
+            }
+
+            updateDimensionsTable();
+            updateVolumeSummary();
+        }
+
+        function updateVolumeSummary() {
+            // Calculate totals by length
+            const lengthTotals = {};
+            let totalVolume = 0;
+            let totalBoards = 0;
+
+            currentPackage.lengths.forEach(length => {
+                lengthTotals[length] = { volume: 0, count: 0 };
+            });
+
+            currentPackage.dimensions.forEach(dim => {
+                lengthTotals[dim.length].volume += dim.volume;
+                lengthTotals[dim.length].count++;
+                totalVolume += dim.volume;
+                totalBoards++;
+            });
+
+            // Update current package totals
+            currentPackage.totalVolume = totalVolume;
+            currentPackage.totalBoards = totalBoards;
+
+            // Update display
+            const summaryContent = document.getElementById('summaryContent');
+            let summaryHTML = '<div class="summary-grid">';
+
+            Object.keys(lengthTotals).forEach(length => {
+                const data = lengthTotals[length];
+                summaryHTML += `
+                    <div class="summary-item" style="background: white; padding: 1rem; border-radius: 5px; border-left: 4px solid #2c2c2c;">
+                        <h4>${length}cm</h4>
+                        <p>Dasaka: ${data.count}</p>
+                        <p>Volumen: ${data.volume.toFixed(3)} m³</p>
+                    </div>
+                `;
+            });
+
+            summaryHTML += '</div>';
+            summaryHTML += `
+                <div class="summary-total" style="margin-top: 1rem; padding: 1rem; background: #28a745; color: white; border-radius: 5px; text-align: center;">
+                    <h3>UKUPNO: ${totalVolume.toFixed(3)} m³ | ${totalBoards} dasaka</h3>
+                </div>
+            `;
+
+            summaryContent.innerHTML = summaryHTML;
+
+            // Update package in storage
+            const packages = getFromStorage('packages') || [];
+            const packageIndex = packages.findIndex(p => p.id === currentPackage.id);
+            if (packageIndex !== -1) {
+                packages[packageIndex] = currentPackage;
+                saveToStorage('packages', packages);
+            }
+        }
+
+        function finishPackage() {
+            if (currentPackage.dimensions.length === 0) {
+                alert('Paket mora imati barem jednu dimenziju!');
+                return;
+            }
+
+            // Mark package as finished
+            currentPackage.isFinished = true;
+            currentPackage.finishedAt = new Date().toISOString();
+
+            // Update package in storage
+            const packages = getFromStorage('packages') || [];
+            const packageIndex = packages.findIndex(p => p.id === currentPackage.id);
+            if (packageIndex !== -1) {
+                packages[packageIndex] = currentPackage;
+                saveToStorage('packages', packages);
+            }
+
+            alert(`Paket P-${currentPackage.id} je završen!\nUkupno: ${currentPackage.totalVolume.toFixed(3)} m³ | ${currentPackage.totalBoards} dasaka`);
+            showMainMenu();
+        }
+
+        function updateFinishedPackagesList() {
+            const packages = getFromStorage('packages') || [];
+            const finishedPackages = packages.filter(p => p.isFinished);
+            
+            const container = document.getElementById('finishedPackagesList');
+            container.innerHTML = '';
+
+            if (finishedPackages.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Nema završenih paketa.</p>';
+                return;
+            }
+
+            finishedPackages.forEach(pkg => {
+                const packageItem = document.createElement('div');
+                packageItem.className = `package-item ${pkg.isShipped ? 'shipped' : ''}`;
+                
+                packageItem.innerHTML = `
+                    <div class="package-details">
+                        <h4>P-${pkg.id} ${pkg.isShipped ? '(OTPREMLJENO)' : ''}</h4>
+                        <p><strong>Vrsta:</strong> ${pkg.woodTypeName} | <strong>Kvaliteta:</strong> ${pkg.qualityName}</p>
+                        <p><strong>Debljina:</strong> ${pkg.thickness}mm | <strong>Tip:</strong> ${pkg.boardType}</p>
+                        <p><strong>Volumen:</strong> ${pkg.totalVolume.toFixed(3)} m³ | <strong>Dasaka:</strong> ${pkg.totalBoards}</p>
+                        <p><strong>Završen:</strong> ${new Date(pkg.finishedAt).toLocaleDateString('hr-HR')}</p>
+                    </div>
+                    <div class="package-actions">
+                        <button class="edit-btn" onclick="requestPasswordForEdit('${pkg.id}')">Uredi</button>
+                        <button class="delete-btn" onclick="requestPasswordForDelete('${pkg.id}')">Obriši</button>
+                        <button class="shipped-btn" onclick="requestPasswordForShip('${pkg.id}')">${pkg.isShipped ? 'Vrati' : 'Otpremi'}</button>
+                    </div>
+                `;
+                
+                container.appendChild(packageItem);
+            });
+        }
+
+        function updateUnfinishedPackagesList() {
+            console.log('Ažuriranje liste nezavršenih paketa...');
+            const packages = getFromStorage('packages') || [];
+            const unfinishedPackages = packages.filter(p => !p.isFinished);
+            console.log('Nezavršeni paketi:', unfinishedPackages.length);
+            
+            const container = document.getElementById('unfinishedPackagesList');
+            container.innerHTML = '';
+
+            if (unfinishedPackages.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Nema nezavršenih paketa.</p>';
+                return;
+            }
+
+            unfinishedPackages.forEach(pkg => {
+                console.log('Kreiranje elementa za paket:', pkg.id);
+                const packageItem = document.createElement('div');
+                packageItem.className = 'package-item';
+                
+                packageItem.innerHTML = `
+                    <div class="package-details">
+                        <h4>P-${pkg.id}</h4>
+                        <p><strong>Vrsta:</strong> ${pkg.woodTypeName} | <strong>Kvaliteta:</strong> ${pkg.qualityName}</p>
+                        <p><strong>Debljina:</strong> ${pkg.thickness}mm | <strong>Tip:</strong> ${pkg.boardType}</p>
+                        <p><strong>Volumen:</strong> ${pkg.totalVolume.toFixed(3)} m³ | <strong>Dasaka:</strong> ${pkg.totalBoards}</p>
+                        <p><strong>Započet:</strong> ${new Date(pkg.createdAt).toLocaleDateString('hr-HR')}</p>
+                    </div>
+                    <div class="package-actions">
+                        <button class="edit-btn" onclick="continuePackage('${pkg.id}')">Nastavi</button>
+                        <button class="delete-btn" onclick="console.log('Delete button clicked for ${pkg.id}'); deleteUnfinishedPackage('${pkg.id}')">Obriši</button>
+                    </div>
+                `;
+                
+                container.appendChild(packageItem);
+            });
+        }
+
+        function continuePackage(packageId) {
+            const packages = getFromStorage('packages') || [];
+            currentPackage = packages.find(p => p.id === packageId);
+            
+            if (currentPackage) {
+                showPackageEntry();
+            }
+        }
+
+        function deleteUnfinishedPackage(packageId) {
+            console.log('=== POČETAK BRISANJA ===');
+            console.log('Pozivam brisanje za ID:', packageId);
+            
+            // Umjesto confirm(), koristimo drugi pristup
+            const shouldDelete = window.prompt('Za potvrdu brisanja unesite "DA" (velikim slovima):');
+            console.log('Korisnikov odgovor:', shouldDelete);
+            
+            if (shouldDelete === "DA") {
+                console.log('Korisnik je potvrdio - nastavljam s brisanjem');
+                let packages = getFromStorage('packages') || [];
+                console.log('Ukupno paketa u storage:', packages.length);
+                
+                const packageToDelete = packages.find(p => p.id === packageId);
+                console.log('Pronađen paket za brisanje:', packageToDelete);
+                
+                if (packageToDelete) {
+                    console.log('Paket pronađen - brišem ga');
+                    const originalLength = packages.length;
+                    packages = packages.filter(p => p.id !== packageId);
+                    console.log('Paketa prije brisanja:', originalLength);
+                    console.log('Paketa nakon brisanja:', packages.length);
+                    
+                    console.log('Spremam u storage...');
+                    saveToStorage('packages', packages);
+                    console.log('Spremljeno u storage');
+                    
+                    console.log('Ažuriram prikaz...');
+                    updateUnfinishedPackagesList();
+                    console.log('Prikaz ažuriran');
+                    
+                    alert(`Paket P-${packageId} je uspješno obrisan!`);
+                    console.log('Brisanje završeno uspješno');
+                } else {
+                    console.log('GREŠKA: Paket nije pronađen!');
+                    alert('Greška: Paket nije pronađen!\nID: ' + packageId);
+                }
+            } else {
+                console.log('Korisnik je otkazao brisanje ili unio pogrešan tekst');
+                if (shouldDelete !== null) {
+                    alert('Brisanje otkazano. Za potvrdu brisanja trebate unijeti "DA" (velikim slovima).');
+                }
+            }
+            console.log('=== KRAJ BRISANJA ===');
+        }
+
+        function updateInventoryDisplay() {
+            const packages = getFromStorage('packages') || [];
+            const activePackages = packages.filter(p => p.isFinished && !p.isShipped);
+            
+            // Initialize inventory data
+            const inventory = {};
+            Object.values(woodTypes).forEach(wood => {
+                inventory[wood] = { '01': 0, '02': 0, '03': 0, '04': 0, total: 0 };
+            });
+
+            // Calculate inventory from active packages
+            activePackages.forEach(pkg => {
+                const woodName = pkg.woodTypeName;
+                const quality = pkg.quality;
+                inventory[woodName][quality] += pkg.totalVolume;
+                inventory[woodName].total += pkg.totalVolume;
+            });
+
+            // Update table
+            const tbody = document.getElementById('inventoryBody');
+            tbody.innerHTML = '';
+
+            Object.keys(inventory).forEach(wood => {
+                const data = inventory[wood];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${wood}</strong></td>
+                    <td>${data['01'].toFixed(3)}</td>
+                    <td>${data['02'].toFixed(3)}</td>
+                    <td>${data['03'].toFixed(3)}</td>
+                    <td>${data['04'].toFixed(3)}</td>
+                    <td><strong>${data.total.toFixed(3)}</strong></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add total row
+            const totalRow = document.createElement('tr');
+            totalRow.style.backgroundColor = '#2c2c2c';
+            totalRow.style.color = 'white';
+            totalRow.style.fontWeight = 'bold';
+            
+            let totalA = 0, totalAB = 0, totalC = 0, totalPilopak = 0, grandTotal = 0;
+            Object.values(inventory).forEach(data => {
+                totalA += data['01'];
+                totalAB += data['02'];
+                totalC += data['03'];
+                totalPilopak += data['04'];
+                grandTotal += data.total;
+            });
+
+            totalRow.innerHTML = `
+                <td>UKUPNO</td>
+                <td>${totalA.toFixed(3)}</td>
+                <td>${totalAB.toFixed(3)}</td>
+                <td>${totalC.toFixed(3)}</td>
+                <td>${totalPilopak.toFixed(3)}</td>
+                <td>${grandTotal.toFixed(3)}</td>
+            `;
+            tbody.appendChild(totalRow);
+        }
+
+        // Password protection functions
+        function requestPasswordForEdit(packageId) {
+            pendingAction = 'edit';
+            actionPackage = packageId;
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+
+        function requestPasswordForDelete(packageId) {
+            pendingAction = 'delete';
+            actionPackage = packageId;
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+
+        function requestPasswordForShip(packageId) {
+            pendingAction = 'ship';
+            actionPackage = packageId;
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            
+            if (password === '2908') {
+                executeAction();
+                closePasswordModal();
+            } else {
+                alert('Neispravna lozinka!');
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function executeAction() {
+            const packages = getFromStorage('packages') || [];
+            const packageIndex = packages.findIndex(p => p.id === actionPackage);
+            
+            if (packageIndex === -1) return;
+
+            switch (pendingAction) {
+                case 'edit':
+                    currentPackage = packages[packageIndex];
+                    showPackageEntry();
+                    break;
+                
+                case 'delete':
+                    if (confirm('Jeste li sigurni da želite obrisati ovaj paket?')) {
+                        packages.splice(packageIndex, 1);
+                        saveToStorage('packages', packages);
+                        updateFinishedPackagesList();
+                    }
+                    break;
+                
+                case 'ship':
+                    packages[packageIndex].isShipped = !packages[packageIndex].isShipped;
+                    packages[packageIndex].shippedAt = packages[packageIndex].isShipped ? new Date().toISOString() : null;
+                    saveToStorage('packages', packages);
+                    updateFinishedPackagesList();
+                    break;
+            }
+
+            pendingAction = null;
+            actionPackage = null;
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+            pendingAction = null;
+            actionPackage = null;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initApp();
+            
+            // Enter key support for password modal
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            // Enter key support for width input
+            document.getElementById('widthInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addWidth();
+                }
+            });
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('passwordModal');
+            if (event.target === modal) {
+                closePasswordModal();
+            }
+        }
+    </script>
+</body>
+</html>
