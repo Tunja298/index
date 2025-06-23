@@ -1547,5 +1547,31 @@ if ('serviceWorker' in navigator) {
             }
         }
     </script>
+    <script>
+// Registracija Service Worker-a
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+        try {
+            const registration = await navigator.serviceWorker.register('sw.js');
+            console.log('Service Worker registriran uspješno:', registration.scope);
+            
+            // Provjeri za ažuriranja
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // Prikaži poruku o ažuriranju
+                        if (confirm('Nova verzija aplikacije je dostupna! Želite li je instalirati?')) {
+                            window.location.reload();
+                        }
+                    }
+                });
+            });
+        } catch (error) {
+            console.log('Service Worker registracija neuspješna:', error);
+        }
+    });
+}
+</script>
 </body>
 </html>
